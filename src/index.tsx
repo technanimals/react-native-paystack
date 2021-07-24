@@ -1,5 +1,7 @@
-export default {
-  multiply(a: number, b: number) {
-    return Promise.resolve(a * b);
-  },
-};
+export { Paystack, PaystackComponentProps } from './Paystack';
+export {
+  ResponseEvent,
+  ResponseEventType,
+  Currency,
+  PaymentChannel,
+} from './Paystack/helpers';

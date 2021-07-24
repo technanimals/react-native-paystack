@@ -1,18 +1,22 @@
 import * as React from 'react';
 
-import { StyleSheet, View, Text } from 'react-native';
-import RnPaystack from 'rn-paystack';
+import { StyleSheet, View } from 'react-native';
+import { Currency, Paystack } from 'rn-paystack';
 
 export default function App() {
-  const [result, setResult] = React.useState<number | undefined>();
-
-  React.useEffect(() => {
-    RnPaystack.multiply(3, 7).then(setResult);
-  }, []);
-
   return (
     <View style={styles.container}>
-      <Text>Result: {result}</Text>
+      <Paystack
+        amount={100}
+        email="lebogang.midas@gmail.com"
+        publicKey="pk_test_ca099121c0d4094ae0b9c12995ef4536d80ab6ee"
+        onCancel={console.log}
+        onSuccess={console.log}
+        autoStart={true}
+        channels={['card']}
+        currency={Currency.SOUTH_AFRICAN_RAND}
+        label="Lebogang Mabala"
+      />
     </View>
   );
 }
