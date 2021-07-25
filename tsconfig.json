@@ -2,7 +2,7 @@
   "compilerOptions": {
     "baseUrl": "./",
     "paths": {
-      "rn-paystack": ["./src/index"]
+      "@technanimals/react-native-paystack": ["./src/index"]
     },
     "allowUnreachableCode": false,
     "allowUnusedLabels": false,

@@ -1,5 +1,5 @@
 {
-  "name": "rn-paystack-example",
+  "name": "paystack-example",
   "description": "Example app for rn-paystack",
   "version": "0.0.1",
   "private": true,
@@ -10,7 +10,9 @@
   },
   "dependencies": {
     "react": "16.13.1",
-    "react-native": "0.63.4"
+    "react-native": "0.63.4",
+    "react-native-paystack-webview": "~3.2.1",
+    "react-native-webview": "~11.6.5"
   },
   "devDependencies": {
     "@babel/core": "^7.12.10",
