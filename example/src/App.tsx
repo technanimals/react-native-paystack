@@ -1,11 +1,11 @@
 import * as React from 'react';
 
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, SafeAreaView } from 'react-native';
 import { Currency, PaystackView } from '@technanimals/react-native-paystack';
 
 export default function App() {
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <PaystackView
         payment={{
           amount: '10000',
@@ -18,21 +18,14 @@ export default function App() {
         }}
         onCancel={console.log}
         onSuccess={console.log}
-        autoStart={true}
+        onClose={console.log}
       />
-    </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  box: {
-    width: 60,
-    height: 60,
-    marginVertical: 20,
   },
 });

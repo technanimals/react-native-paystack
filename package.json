@@ -1,6 +1,6 @@
 {
   "name": "@technanimals/react-native-paystack",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "A react native module for Paystack",
   "main": "lib/commonjs/index.js",
   "module": "lib/module/index.js",
