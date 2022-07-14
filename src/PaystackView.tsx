@@ -1,18 +1,5 @@
-import React, {
-  useState,
-  useEffect,
-  forwardRef,
-  useRef,
-  useImperativeHandle,
-  useCallback,
-} from 'react';
-import {
-  Modal,
-  View,
-  ActivityIndicator,
-  SafeAreaView,
-  StyleSheet,
-} from 'react-native';
+import React, { useState, forwardRef, useRef, useCallback } from 'react';
+import { View, ActivityIndicator, StyleSheet } from 'react-native';
 import { WebView, WebViewNavigation } from 'react-native-webview';
 import {
   getHtmlContent,
@@ -27,36 +14,16 @@ const CLOSE_URL = 'https://standard.paystack.co/close';
 const Paystack: React.ForwardRefRenderFunction<
   PaystackViewRef,
   PaystackViewProps
-> = (props, ref) => {
+> = (props) => {
   const {
     handleWebViewMessage,
     onCancel,
-    autoStart = false,
     onSuccess,
+    onClose,
     activityIndicatorColor = 'green',
   } = props;
   const [isLoading, setLoading] = useState(true);
-  const [isModalVisible, setModalVisibility] = useState(false);
   const webView = useRef(null);
-
-  useEffect(() => {
-    autoStartCheck();
-  }, []);
-
-  useImperativeHandle(ref, () => ({
-    startTransaction() {
-      setModalVisibility(true);
-    },
-    endTransaction() {
-      setModalVisibility(false);
-    },
-  }));
-
-  const autoStartCheck = () => {
-    if (autoStart) {
-      setModalVisibility(true);
-    }
-  };
 
   const messageReceived = (data: string) => {
     const response = JSON.parse(data) as ResponseEvent<SuccessEvent>;
@@ -65,13 +32,10 @@ const Paystack: React.ForwardRefRenderFunction<
     }
     switch (response.eventType) {
       case ResponseEventType.Cancelled:
-        setModalVisibility(false);
         onCancel();
         break;
 
       case ResponseEventType.Success:
-        setModalVisibility(false);
-        console.log({ response });
         if (onSuccess) {
           onSuccess(response.data);
         }
@@ -96,40 +60,32 @@ const Paystack: React.ForwardRefRenderFunction<
   const onLoadEnd = useCallback(() => {
     setLoading(false);
   }, []);
+
   const onNavigationStateChange = (state: WebViewNavigation) => {
     const { url } = state;
     if (url === CLOSE_URL) {
-      setModalVisibility(false);
+      onClose();
     }
   };
-  const { container } = styles;
-  const html = getHtmlContent(props.payment);
-  return (
-    <Modal
-      //@ts-ignore
-      style={container}
-      visible={isModalVisible}
-      animationType="slide"
-      transparent={false}
-    >
-      <SafeAreaView style={container}>
-        <WebView
-          style={[container]}
-          source={{ html }}
-          onMessage={onMessage}
-          onLoadStart={onLoadStart}
-          onLoadEnd={onLoadEnd}
-          onNavigationStateChange={onNavigationStateChange}
-          ref={webView}
-        />
 
-        {isLoading && (
-          <View>
-            <ActivityIndicator size="large" color={activityIndicatorColor} />
-          </View>
-        )}
-      </SafeAreaView>
-    </Modal>
+  const html = getHtmlContent(props.payment);
+
+  return (
+    <View style={styles.container}>
+      <WebView
+        style={[styles.container]}
+        source={{ html }}
+        onMessage={onMessage}
+        onLoadStart={onLoadStart}
+        onLoadEnd={onLoadEnd}
+        onNavigationStateChange={onNavigationStateChange}
+        ref={webView}
+      />
+
+      {isLoading && (
+        <ActivityIndicator size="large" color={activityIndicatorColor} />
+      )}
+    </View>
   );
 };
 
@@ -149,7 +105,7 @@ export interface PaystackViewProps {
   handleWebViewMessage?: (message: string) => void;
   onCancel: () => void;
   onSuccess: (event: SuccessEvent) => void;
-  autoStart?: boolean;
+  onClose: () => void;
   activityIndicatorColor?: string;
 }
 export const PaystackView = forwardRef(Paystack);
