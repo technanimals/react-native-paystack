@@ -1,4 +1,4 @@
-import React, { useState, forwardRef, useRef, useCallback } from 'react';
+import React, { useState, useCallback, ReactNode } from 'react';
 import { View, ActivityIndicator, StyleSheet } from 'react-native';
 import { WebView, WebViewNavigation } from 'react-native-webview';
 import {
@@ -11,19 +11,9 @@ import {
 
 const CLOSE_URL = 'https://standard.paystack.co/close';
 
-const Paystack: React.ForwardRefRenderFunction<
-  PaystackViewRef,
-  PaystackViewProps
-> = (props) => {
-  const {
-    handleWebViewMessage,
-    onCancel,
-    onSuccess,
-    onClose,
-    activityIndicatorColor = 'green',
-  } = props;
+const Paystack: React.FC<PaystackViewProps> = (props) => {
+  const { handleWebViewMessage, onCancel, onSuccess, onClose, loader } = props;
   const [isLoading, setLoading] = useState(true);
-  const webView = useRef(null);
 
   const messageReceived = (data: string) => {
     const response = JSON.parse(data) as ResponseEvent<SuccessEvent>;
@@ -79,12 +69,9 @@ const Paystack: React.ForwardRefRenderFunction<
         onLoadStart={onLoadStart}
         onLoadEnd={onLoadEnd}
         onNavigationStateChange={onNavigationStateChange}
-        ref={webView}
       />
 
-      {isLoading && (
-        <ActivityIndicator size="large" color={activityIndicatorColor} />
-      )}
+      {isLoading && (loader || <ActivityIndicator size="large" color="#000" />)}
     </View>
   );
 };
@@ -95,17 +82,12 @@ const styles = StyleSheet.create({
   },
 });
 
-export interface PaystackViewRef {
-  startTransaction: () => void;
-  endTransaction: () => void;
-}
-
 export interface PaystackViewProps {
   payment: PaystackScriptProps;
   handleWebViewMessage?: (message: string) => void;
   onCancel: () => void;
   onSuccess: (event: SuccessEvent) => void;
   onClose: () => void;
-  activityIndicatorColor?: string;
+  loader?: ReactNode;
 }
-export const PaystackView = forwardRef(Paystack);
+export const PaystackView = Paystack;
