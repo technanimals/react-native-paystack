@@ -1,5 +1,5 @@
-import React, { useState, useCallback, ReactNode } from 'react';
-import { View, ActivityIndicator, StyleSheet } from 'react-native';
+import React, { useCallback } from 'react';
+import { View, StyleSheet } from 'react-native';
 import { WebView, WebViewNavigation } from 'react-native-webview';
 import {
   getHtmlContent,
@@ -12,8 +12,7 @@ import {
 const CLOSE_URL = 'https://standard.paystack.co/close';
 
 const Paystack: React.FC<PaystackViewProps> = (props) => {
-  const { handleWebViewMessage, onCancel, onSuccess, onClose, loader } = props;
-  const [isLoading, setLoading] = useState(true);
+  const { handleWebViewMessage, onCancel, onSuccess, onClose } = props;
 
   const messageReceived = (data: string) => {
     const response = JSON.parse(data) as ResponseEvent<SuccessEvent>;
@@ -43,14 +42,6 @@ const Paystack: React.FC<PaystackViewProps> = (props) => {
     messageReceived(e.nativeEvent?.data);
   }, []);
 
-  const onLoadStart = useCallback(() => {
-    setLoading(true);
-  }, []);
-
-  const onLoadEnd = useCallback(() => {
-    setLoading(false);
-  }, []);
-
   const onNavigationStateChange = (state: WebViewNavigation) => {
     const { url } = state;
     if (url === CLOSE_URL) {
@@ -66,12 +57,8 @@ const Paystack: React.FC<PaystackViewProps> = (props) => {
         style={[styles.container]}
         source={{ html }}
         onMessage={onMessage}
-        onLoadStart={onLoadStart}
-        onLoadEnd={onLoadEnd}
         onNavigationStateChange={onNavigationStateChange}
       />
-
-      {isLoading && (loader || <ActivityIndicator size="large" color="#000" />)}
     </View>
   );
 };
@@ -88,6 +75,5 @@ export interface PaystackViewProps {
   onCancel: () => void;
   onSuccess: (event: SuccessEvent) => void;
   onClose: () => void;
-  loader?: ReactNode;
 }
 export const PaystackView = Paystack;
